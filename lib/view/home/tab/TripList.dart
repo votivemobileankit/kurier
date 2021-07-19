@@ -41,6 +41,7 @@ class _MyListPageState extends State<MyListPage> {
   double topContainer = 0;
   List<Widget> itemsData = [];
   String driver_id;
+  String restaurant_id;
 
   ProgressHUD _progressHUD;
   bool _loading = true;
@@ -51,10 +52,10 @@ class _MyListPageState extends State<MyListPage> {
     ProfilePage(),
   ];
 
-  void getPostsData(String driverid) async {
+  void getPostsData(String driverid, String restaurant_id) async {
     var APIURL =
         Uri.parse('https://votivetech.in/courier/webservice/api/getTripList');
-    Map mapeddate = {"driver_id": driverid};
+    Map mapeddate = {"driver_id": driverid, "restaurant_id": restaurant_id};
     print(driverid);
     Response response = await post(APIURL, body: mapeddate);
     var data = jsonDecode(response.body);
@@ -149,8 +150,25 @@ class _MyListPageState extends State<MyListPage> {
   void initState() {
     secureStorage.readSecureData("driverid").then((value) {
       driver_id = value;
-      getPostsData(driver_id);
+
     });
+
+    secureStorage.readSecureData("restaurant_id").then((value) {
+      restaurant_id = value;
+      print("restaurant_id: ${restaurant_id}");
+
+      if(restaurant_id==null ||restaurant_id.isEmpty){
+        ShowRestaurantSelectDialog(context);
+      }else{
+        getPostsData(driver_id, restaurant_id);
+      }
+
+
+
+    });
+
+
+
     controller.addListener(() {
       double value = controller.offset / 119;
       setState(() {
@@ -333,20 +351,20 @@ class _MyListPageState extends State<MyListPage> {
   }
 }
 
-_showLayout(BuildContext context) async {
+ShowRestaurantSelectDialog(BuildContext context) async {
   print("_showLayout:");
   await showDialog(
     context: context,
     builder: (context) {
       return AlertDialog(
-        title: Text('Data not found'),
+        title: Text('Please Select Restaurant'),
         actions: <Widget>[
           FlatButton(
               child: Text('OK'),
               onPressed: () {
                 Navigator.of(context).push(
                     MaterialPageRoute<Null>(builder: (BuildContext context) {
-                  return new ListApp();
+                  return new RestaurantList();
                 }));
               }),
         ],

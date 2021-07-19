@@ -22,6 +22,7 @@ const double CAMERA_ZOOM = 12;
 const double CAMERA_TILT = 0;
 const double CAMERA_BEARING = 30;
 LatLng SOURCE_LOCATION = LatLng(0, 0);
+
 String driverid;
 String pickup_lat;
 String pickup_long;
@@ -60,7 +61,7 @@ class MapPageState extends State<NewMapScreen> {
   String googleAPIKey = "AIzaSyB6jpjQRZn8vu59ElER36Q2LaxptdAghaA";
   BitmapDescriptor sourceIcon;
   BitmapDescriptor destinationIcon;
-  List<TaskModel> listofTasks = new List<TaskModel>();
+  List<TaskModel> listofTasks = [];
   final SecureStorage secureStorage = SecureStorage();
   int _selected;
 
