@@ -20,9 +20,18 @@ class UploadImageDemo extends StatefulWidget {
 }
 
 class _UploadPageState extends State<UploadImageDemo> {
-  var file;
-  var file1;
-  Future<File> fileArray;
+  final picker = ImagePicker();
+  XFile _image;
+
+  _imgFromGallery() async {
+    final imagePickre = await  picker.pickImage(
+        source: ImageSource.gallery, imageQuality: 50
+    );
+    print(imagePickre?.path.toString());
+    setState(() {
+      _image = imagePickre;
+    });
+  }
 
   String note;
   String imageType;
@@ -49,21 +58,20 @@ class _UploadPageState extends State<UploadImageDemo> {
 
   }
 
-  Widget showImage() {
+  /*Widget showImage() {
     return FutureBuilder<File>(
       future: fileArray,
       builder: (BuildContext context, AsyncSnapshot<File> snapshot) {
         if (snapshot.connectionState == ConnectionState.done &&
-            null != snapshot.data) {
-          file1 = snapshot.data;
-          imageType = base64Encode(snapshot.data.readAsBytesSync());
+            snapshot.data != null) {
+          //imageType = base64Encode(snapshot.data.readAsBytesSync());
           return Flexible(
             child: Image.file(
               snapshot.data,
               fit: BoxFit.fill,
-            ),
+            )
           );
-        } else if (null != snapshot.error) {
+        } else if (snapshot.error != null) {
           return const Text(
             'Error Picking Image',
             textAlign: TextAlign.center,
@@ -76,7 +84,7 @@ class _UploadPageState extends State<UploadImageDemo> {
         }
       },
     );
-  }
+  }*/
 
   @override
   Widget build(BuildContext context) {
@@ -87,8 +95,8 @@ class _UploadPageState extends State<UploadImageDemo> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            file != null
-                ? showImage()
+            _image != null
+                ? Image.file(File(_image.path))
                 : SizedBox(
                     width: 0.0,
                   ),
@@ -116,11 +124,11 @@ class _UploadPageState extends State<UploadImageDemo> {
             SizedBox(
               height: 100.0,
             ),
-            file != null
-                ? RaisedButton(
+            _image != null
+                ? ElevatedButton(
                     child: Text("Upload Image"),
                     onPressed: () async {
-                      var res = await uploadImage(file.path);
+                      var res = await uploadImage(_image.path);
                       setState(() {
                         print(res);
                       });
@@ -129,18 +137,12 @@ class _UploadPageState extends State<UploadImageDemo> {
                 : SizedBox(
                     width: 50.0,
                   ),
-            file == null
-                ? RaisedButton(
+            if (_image == null) ElevatedButton(
                     child: Text("Open Gallery"),
                     onPressed: () async {
-                      file = await ImagePicker.platform.pickImage(source: ImageSource.gallery);
-                      file1 = await ImagePicker.platform.pickImage(source: ImageSource.gallery);
-                      setState(() {});
-                      // fileArray =
-                      //     ImagePicker.platform.pickImage(source: ImageSource.gallery);
+                      _imgFromGallery();
                     },
-                  )
-                : SizedBox(
+                  ) else SizedBox(
                     width: 0.0,
                   )
           ],

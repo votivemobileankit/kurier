@@ -144,7 +144,7 @@ class MapPageState extends State<NewMapScreen> {
       updatePinOnMap();
       print("updatePinOnMap>>>: ${updatePinOnMap}");
       UpdateDriverlocation(
-          context, currentLocation.latitude, currentLocation.longitude);
+          context, currentLocation.latitude, currentLocation.longitude, widget.tripid);
     });
   }
 
@@ -428,7 +428,7 @@ class MapPageState extends State<NewMapScreen> {
           "currentLocation.latitude>>>: ${currentLocation.latitude}${currentLocation.longitude}");
 
       UpdateDriverlocation(
-          context, currentLocation.latitude, currentLocation.longitude);
+          context, currentLocation.latitude, currentLocation.longitude, widget.tripid);
     });
   }
 
@@ -484,7 +484,7 @@ Future DispatchParcel(
 }
 
 Future UpdateDriverlocation(
-    BuildContext context, double latitude, double longitude) async {
+    BuildContext context, double latitude, double longitude, String tripid) async {
   print("UpdateDriverlocation>>>: ${UpdateDriverlocation}");
 
   var APIURL = Uri.parse(
@@ -493,6 +493,7 @@ Future UpdateDriverlocation(
     'driver_id': driverid,
     'location_lat': latitude.toString(),
     'location_long': longitude.toString(),
+    'trip_id': tripid,
   };
 
   print("APIURL: ${APIURL}");

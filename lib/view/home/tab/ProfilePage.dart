@@ -151,12 +151,12 @@ class MapScreenState extends State<ProfilePage>
                                         left: 25.0, right: 25.0, top: 25.0),
                                     child: new Row(
                                       mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
+                                      MainAxisAlignment.spaceBetween,
                                       mainAxisSize: MainAxisSize.max,
                                       children: <Widget>[
                                         new Column(
                                           mainAxisAlignment:
-                                              MainAxisAlignment.start,
+                                          MainAxisAlignment.start,
                                           mainAxisSize: MainAxisSize.min,
                                           children: <Widget>[
                                             new Text(
@@ -169,7 +169,7 @@ class MapScreenState extends State<ProfilePage>
                                         ),
                                         new Column(
                                           mainAxisAlignment:
-                                              MainAxisAlignment.end,
+                                          MainAxisAlignment.end,
                                           mainAxisSize: MainAxisSize.min,
                                           children: <Widget>[
                                             _status
@@ -179,7 +179,7 @@ class MapScreenState extends State<ProfilePage>
                                         ),
                                         new Column(
                                           mainAxisAlignment:
-                                              MainAxisAlignment.end,
+                                          MainAxisAlignment.end,
                                           mainAxisSize: MainAxisSize.min,
                                           children: <Widget>[
                                             _status
@@ -197,7 +197,7 @@ class MapScreenState extends State<ProfilePage>
                                       children: <Widget>[
                                         new Column(
                                           mainAxisAlignment:
-                                              MainAxisAlignment.start,
+                                          MainAxisAlignment.start,
                                           mainAxisSize: MainAxisSize.min,
                                           children: <Widget>[
                                             new Text(
@@ -246,7 +246,7 @@ class MapScreenState extends State<ProfilePage>
                                       children: <Widget>[
                                         new Column(
                                           mainAxisAlignment:
-                                              MainAxisAlignment.start,
+                                          MainAxisAlignment.start,
                                           mainAxisSize: MainAxisSize.min,
                                           children: <Widget>[
                                             new Text(
@@ -295,7 +295,7 @@ class MapScreenState extends State<ProfilePage>
                                       children: <Widget>[
                                         new Column(
                                           mainAxisAlignment:
-                                              MainAxisAlignment.start,
+                                          MainAxisAlignment.start,
                                           mainAxisSize: MainAxisSize.min,
                                           children: <Widget>[
                                             new Text(
@@ -343,7 +343,7 @@ class MapScreenState extends State<ProfilePage>
                                       children: <Widget>[
                                         new Column(
                                           mainAxisAlignment:
-                                              MainAxisAlignment.start,
+                                          MainAxisAlignment.start,
                                           mainAxisSize: MainAxisSize.min,
                                           children: <Widget>[
                                             new Text(
@@ -391,7 +391,7 @@ class MapScreenState extends State<ProfilePage>
                                       children: <Widget>[
                                         new Column(
                                           mainAxisAlignment:
-                                              MainAxisAlignment.start,
+                                          MainAxisAlignment.start,
                                           mainAxisSize: MainAxisSize.min,
                                           children: <Widget>[
                                             new Text(
@@ -437,7 +437,7 @@ class MapScreenState extends State<ProfilePage>
                                     child: new Row(
                                       mainAxisSize: MainAxisSize.max,
                                       mainAxisAlignment:
-                                          MainAxisAlignment.start,
+                                      MainAxisAlignment.start,
                                       children: <Widget>[
                                         Expanded(
                                           child: Container(
@@ -469,12 +469,12 @@ class MapScreenState extends State<ProfilePage>
                                     child: new Row(
                                       mainAxisSize: MainAxisSize.max,
                                       mainAxisAlignment:
-                                          MainAxisAlignment.start,
+                                      MainAxisAlignment.start,
                                       children: <Widget>[
                                         Flexible(
                                           child: Padding(
                                             padding:
-                                                EdgeInsets.only(right: 10.0),
+                                            EdgeInsets.only(right: 10.0),
                                             child: new TextFormField(
                                               decoration: const InputDecoration(
                                                   hintText: "Post Code"),
@@ -566,23 +566,23 @@ class MapScreenState extends State<ProfilePage>
               padding: EdgeInsets.only(right: 10.0),
               child: Container(
                   child: new RaisedButton(
-                child: new Text("Save"),
-                textColor: Colors.white,
-                color: Colors.green,
-                onPressed: () {
-                  if (!globalKey.currentState.validate()) {
-                    return;
-                  }
-                  globalKey.currentState.save();
-                  setState(() {
-                    _status = true;
-                    FocusScope.of(context).requestFocus(new FocusNode());
-                  });
-                  UpdateUser(context);
-                },
-                shape: new RoundedRectangleBorder(
-                    borderRadius: new BorderRadius.circular(20.0)),
-              )),
+                    child: new Text("Save"),
+                    textColor: Colors.white,
+                    color: Colors.green,
+                    onPressed: () {
+                      if (!globalKey.currentState.validate()) {
+                        return;
+                      }
+                      globalKey.currentState.save();
+                      setState(() {
+                        _status = true;
+                        FocusScope.of(context).requestFocus(new FocusNode());
+                      });
+                      UpdateUser(context);
+                    },
+                    shape: new RoundedRectangleBorder(
+                        borderRadius: new BorderRadius.circular(20.0)),
+                  )),
             ),
             flex: 2,
           ),
@@ -591,18 +591,18 @@ class MapScreenState extends State<ProfilePage>
               padding: EdgeInsets.only(left: 10.0),
               child: Container(
                   child: new RaisedButton(
-                child: new Text("Cancel"),
-                textColor: Colors.white,
-                color: Colors.red,
-                onPressed: () {
-                  setState(() {
-                    _status = true;
-                    FocusScope.of(context).requestFocus(new FocusNode());
-                  });
-                },
-                shape: new RoundedRectangleBorder(
-                    borderRadius: new BorderRadius.circular(20.0)),
-              )),
+                    child: new Text("Cancel"),
+                    textColor: Colors.white,
+                    color: Colors.red,
+                    onPressed: () {
+                      setState(() {
+                        _status = true;
+                        FocusScope.of(context).requestFocus(new FocusNode());
+                      });
+                    },
+                    shape: new RoundedRectangleBorder(
+                        borderRadius: new BorderRadius.circular(20.0)),
+                  )),
             ),
             flex: 2,
           ),
@@ -649,7 +649,7 @@ class MapScreenState extends State<ProfilePage>
 
   Future UpdateUser(BuildContext context) async {
     var APIURL =
-        Uri.parse('https://votivetech.in/courier/webservice/api/profileUpdate');
+    Uri.parse('https://votivetech.in/courier/webservice/api/profileUpdate');
     Map mapeddate = {
       'driver_id': driverid,
       'first_name': fullname,
@@ -731,61 +731,53 @@ class MapScreenState extends State<ProfilePage>
   }
 
   showAlertDialog(BuildContext context) {
-    // set up the buttons
-    Widget cancelButton = RaisedButton(
-      child: Text("No"),
-      textColor: Colors.white,
-      color: Colors.red,
-      shape: new RoundedRectangleBorder(
-          borderRadius: new BorderRadius.circular(20.0)),
-      onPressed: () {
-        Navigator.pop(context, false);
-      },
-    );
-    Widget continueButton = RaisedButton(
-      child: Text("Yes"),
-      textColor: Colors.white,
-      color: Colors.green,
-      shape: new RoundedRectangleBorder(
-          borderRadius: new BorderRadius.circular(20.0)),
-      onPressed: () {
-        secureStorage.deleteSecureData('driverid');
-        secureStorage.deleteSecureData('firstname');
-        secureStorage.deleteSecureData('surname');
-        secureStorage.deleteSecureData('email');
-        secureStorage.deleteSecureData('mobilenumber');
-        secureStorage.deleteSecureData('address');
-        secureStorage.deleteSecureData('city');
-        secureStorage.deleteSecureData('postcode');
-        secureStorage.deleteSecureData('status');
-        secureStorage.deleteSecureData('image');
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) {
-              return LoginScreen();
-            },
-          ),
-        );
-      },
-    );
-
-    // set up the AlertDialog
-    AlertDialog alert = AlertDialog(
-      title: Text("Logout"),
-      content: Text("Are you want to logout?"),
-      actions: [
-        cancelButton,
-        continueButton,
-      ],
-    );
-
-    // show the dialog
     showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return alert;
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text("Logout"),
+            content: Text("Are you want to logout?"),
+            actions: [
+              FlatButton(
+                onPressed: () => Navigator.pop(context, false), // passing false
+                child: Text('No'),
+              ),
+              FlatButton(
+                onPressed: () => Navigator.pop(context, true), // passing true
+                child: Text('Yes'),
+              ),
+            ],
+          );
+        }).then(
+          (exit) {
+        if (exit == null) return;
+
+        if (exit) {
+// user pressed Yes button
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) {
+                return LoginScreen();
+              },
+            ),
+          );
+          secureStorage.deleteSecureData('driverid');
+          secureStorage.deleteSecureData('firstname');
+          secureStorage.deleteSecureData('surname');
+          secureStorage.deleteSecureData('email');
+          secureStorage.deleteSecureData('mobilenumber');
+          secureStorage.deleteSecureData('address');
+          secureStorage.deleteSecureData('city');
+          secureStorage.deleteSecureData('postcode');
+          secureStorage.deleteSecureData('status');
+          secureStorage.deleteSecureData('image');
+          secureStorage.deleteSecureData('restaurant_id');
+        } else {
+// user pressed No button
+        }
       },
     );
   }
+
 }

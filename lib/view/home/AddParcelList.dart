@@ -182,8 +182,8 @@ class ParcelData extends State<AddParcelList> {
                     SizedBox(height: 200 * 0.03),
                     Row(children: <Widget>[
                       buildCustomername(context),
-/*                      IconButton(
-                          icon: new Icon(Icons.scanner), onPressed: _nameScan)*/
+                     //IconButton(
+                      //    icon: new Icon(Icons.scanner), onPressed: _nameScan)
                     ]),
                     Row(children: <Widget>[
                       buildCustomerfullname(context),

@@ -3,16 +3,48 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
-import 'package:http/http.dart';
+import 'package:http/http.dart' as http;
 import 'package:kurier/session/SecureStorage.dart';
-import 'package:kurier/view/home/AddParcelList.dart';
+
 import 'package:kurier/view/home/tab/ProfilePage.dart';
 import 'package:kurier/view/parcel/ParcelListActivity.dart';
-import 'package:progress_hud/progress_hud.dart';
 
+import '../AddParcelList.dart';
 import '../AddTripList.dart';
-import '../HomeActivity.dart';
 import '../RestaurantList.dart';
+import 'DriverHistory.dart';
+
+List<TripList> _TripList = [];
+
+class TripList {
+  final String trip_id, name, driver_id, parcel_id, status;
+  final String trip_assign_status, created_date, updated_date, restaurant_id;
+
+  TripList(
+      {this.trip_id,
+        this.name,
+        this.driver_id,
+        this.parcel_id,
+        this.status,
+        this.trip_assign_status,
+        this.created_date,
+        this.updated_date,
+        this.restaurant_id});
+
+  factory TripList.fromJson(Map<String, dynamic> json) {
+    return new TripList(
+      trip_id: json['trip_id'],
+      name: json['name'],
+      driver_id: json['driver_id'],
+      parcel_id: json['parcel_id'],
+      status: json['status'],
+      trip_assign_status: json['trip_assign_status'],
+      created_date: json['created_date'],
+      updated_date: json['updated_date'],
+      restaurant_id: json['restaurant_id'],
+    );
+  }
+}
 
 class ListApp extends StatelessWidget {
   @override
@@ -34,25 +66,27 @@ class MyListPage extends StatefulWidget {
   _MyListPageState createState() => _MyListPageState();
 }
 
+String driver_id;
+String restaurant_id;
+
 class _MyListPageState extends State<MyListPage> {
   ScrollController controller = ScrollController();
   final SecureStorage secureStorage = SecureStorage();
   bool closeTopContainer = false;
   double topContainer = 0;
   List<Widget> itemsData = [];
-  String driver_id;
-  String restaurant_id;
 
-  ProgressHUD _progressHUD;
+  // ProgressHUD _progressHUD;
   bool _loading = true;
   int _selectedIndex = 0;
+  int _selectedIndex2 = 2;
   int _selectedIndex1 = 1;
   List<Widget> _widgetOptions = <Widget>[
     ListApp(),
     ProfilePage(),
   ];
 
-  void getPostsData(String driverid, String restaurant_id) async {
+  /*void getPostsData(String driverid, String restaurant_id) async {
     var APIURL =
         Uri.parse('https://votivetech.in/courier/webservice/api/getTripList');
     Map mapeddate = {"driver_id": driverid, "restaurant_id": restaurant_id};
@@ -62,18 +96,23 @@ class _MyListPageState extends State<MyListPage> {
     int status = data['status'];
     print("status====: ${status}");
     List data1 = data['data'];
-    print("DATA: ${data1}");
+
     List<dynamic> responseList = data1;
     if (status == 0) {
       if (data1.length == 0) {
-       // _showLayout(context);
+        NoTada(context);
         print("isEmpty:");
+        dismissProgressHUD();
       }
+      print("DATA: ${data1}");
     } else {
       dismissProgressHUD();
+      print("DATA: ${data1}");
     }
+
     List<Widget> listItems = [];
     responseList.forEach((post) {
+      print("post: ${post}");
       listItems.add(Container(
           height: 100,
           margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
@@ -116,13 +155,13 @@ class _MyListPageState extends State<MyListPage> {
                                   driver_id: post["driver_id"]));
                           Navigator.pushReplacement(context, route);
 
-                          /*     Navigator.pushReplacement(
+                          */ /*     Navigator.pushReplacement(
                               context,
                               MaterialPageRoute(
                                   builder: (context) => AddParcelList(
                                       tripid: post["trip_id"],
                                       driver_id: post["driver_id"])));
-                      */
+                      */ /*
                         },
                         shape: new RoundedRectangleBorder(
                             borderRadius: new BorderRadius.circular(20.0)),
@@ -145,29 +184,57 @@ class _MyListPageState extends State<MyListPage> {
       itemsData = listItems;
     });
   }
+*/
+  Future<Null> getPostsData(String driver_id, String restaurant_id) async {
+
+    _TripList.clear();
+
+    Map mapeddate = {"driver_id": driver_id, "restaurant_id": restaurant_id};
+    print("mapeddate: ${mapeddate}");
+    print("url>>: ${url}");
+
+    final response = await http.post(Uri.parse(url), body: mapeddate);
+    final responseJson = json.decode(response.body);
+    int status = responseJson['status'];
+    List data1 = responseJson['data'];
+
+    print("DATA: ${data1}");
+    print("status: ${status}");
+    List<dynamic> responseList = data1;
+    print("responseJson>>: ${data1}");
+    setState(() {
+      for (Map user in data1) {
+        _TripList.add(TripList.fromJson(user));
+      }
+    });
+  }
 
   @override
   void initState() {
-    secureStorage.readSecureData("driverid").then((value) {
-      driver_id = value;
-
+    secureStorage.readSecureData("driverid").then((value1) {
+      driver_id = value1;
+      print("driverid: ${driver_id}");
     });
 
     secureStorage.readSecureData("restaurant_id").then((value) {
       restaurant_id = value;
       print("restaurant_id: ${restaurant_id}");
 
-      if(restaurant_id==null ||restaurant_id.isEmpty){
-        ShowRestaurantSelectDialog(context);
-      }else{
+      if (restaurant_id == null || restaurant_id.isEmpty) {
+        _showLayout(context);
+      } else {
         getPostsData(driver_id, restaurant_id);
+        print("getPostsData: ");
       }
-
-
-
     });
 
-
+    /* _progressHUD = new ProgressHUD(
+      backgroundColor: Colors.black12,
+      color: Colors.white,
+      containerColor: Colors.blue,
+      borderRadius: 5.0,
+      text: 'Loading...',
+    );*/
 
     controller.addListener(() {
       double value = controller.offset / 119;
@@ -176,14 +243,6 @@ class _MyListPageState extends State<MyListPage> {
         closeTopContainer = controller.offset > 50;
       });
     });
-
-    _progressHUD = new ProgressHUD(
-      backgroundColor: Colors.black12,
-      color: Colors.white,
-      containerColor: Colors.blue,
-      borderRadius: 5.0,
-      text: 'Loading...',
-    );
 
     super.initState();
   }
@@ -228,27 +287,115 @@ class _MyListPageState extends State<MyListPage> {
         backgroundColor: Colors.white,
         body: Stack(
           children: <Widget>[
-            Expanded(
-                child: ListView.builder(
-                    controller: controller,
-                    itemCount: itemsData.length,
-                    physics: BouncingScrollPhysics(),
-                    itemBuilder: (context, index) {
-                      double scale = 1.0;
+            new Container(
+              child: ListView.builder(
+                itemCount: _TripList.length,
+                itemBuilder: (context, index) {
+                  return new Card(
+                    child:  Container(
+                        height: 100,
+                        margin: const EdgeInsets.symmetric(
+                            horizontal: 10, vertical: 10),
+                        decoration: BoxDecoration(
+                            borderRadius:
+                            BorderRadius.all(Radius.circular(5.0)),
+                            color: Colors.white,
+                            boxShadow: [
+                              BoxShadow(
+                                  color: Colors.black.withAlpha(120),
+                                  blurRadius: 1.0),
+                            ]),
+                        child: InkWell(
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 20.0, vertical: 10),
+                            child: Row(
+                              mainAxisAlignment:
+                              MainAxisAlignment.spaceBetween,
+                              children: <Widget>[
+                                Column(
+                                  crossAxisAlignment:
+                                  CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    Flexible(
+                                        fit: FlexFit.loose,
+                                        child: Text(
+                                          'Trip Name :' +
+                                              _TripList[index].name,
+                                          softWrap: false,
+                                          overflow: TextOverflow.fade,
+                                          style: const TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold),
+                                        )),
+                                    SizedBox(
+                                      height: 10,
+                                    ),
+                                    RaisedButton(
+                                      child: new Text("Add Parcel"),
+                                      textColor: Colors.white,
+                                      color: Colors.blue,
+                                      onPressed: () {
+                                        Route route = MaterialPageRoute(
+                                            builder: (context) =>
+                                                AddParcelList(
+                                                    tripid:
+                                                    _TripList[index]
+                                                        .trip_id,
+                                                    driver_id:
+                                                    _TripList[index]
+                                                        .driver_id));
+                                        Navigator.pushReplacement(
+                                            context, route);
+                                      },
+                                      shape: new RoundedRectangleBorder(
+                                          borderRadius:
+                                          new BorderRadius.circular(
+                                              20.0)),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                          onTap: () => {
+                            Navigator.of(context).push(
+                                MaterialPageRoute<Null>(
+                                    builder: (BuildContext context) {
+                                      return new MyParcelListPage(
+                                          tripid: _TripList[index].trip_id,
+                                          driver_id: _TripList[index].driver_id);
+                                    }))
+                          },
+                        )),
+                    margin: const EdgeInsets.all(0.0),
+                  );
+                },
+              ),
+            ),
 
-                      return Opacity(
-                        opacity: scale,
-                        child: Transform(
-                          transform: Matrix4.identity()..scale(scale, scale),
-                          alignment: Alignment.bottomCenter,
-                          child: Align(
-                              heightFactor: 0.8,
-                              alignment: Alignment.topCenter,
-                              child: itemsData[index]),
-                        ),
-                      );
-                    })),
-            _progressHUD,
+            /*  new Expanded(
+              child: ListView.builder(
+                itemCount: _TripList.length,
+                itemBuilder: (context, index) {
+                  return new Card(
+                    child: new ListTile(
+                        title: new Text(_TripList[index].name),
+                        subtitle: Text('${_TripList[index].updated_date}'),
+                        onTap: () {
+                          Navigator.of(context).push(MaterialPageRoute<Null>(
+                              builder: (BuildContext context) {
+                            return new MyParcelListPage(
+                                tripid: _TripList[index].trip_id,
+                                driver_id: _TripList[index].driver_id);
+                          }));
+                        }),
+                    margin: const EdgeInsets.all(0.0),
+                  );
+                },
+              ),
+            ),*/
+            //  _progressHUD,
           ],
         ),
         bottomNavigationBar: BottomNavigationBar(
@@ -265,8 +412,16 @@ class _MyListPageState extends State<MyListPage> {
               ),
             ),
             BottomNavigationBarItem(
+              icon: Icon(Icons.history),
+              title: Text('HISTORY'),
+              activeIcon: Icon(
+                FontAwesome.history,
+                color: Colors.blue,
+              ),
+            ),
+            BottomNavigationBarItem(
               icon: Icon(Icons.person),
-              title: Text('CALENDAR'),
+              title: Text('Profile'),
               activeIcon: Icon(
                 FontAwesome.user,
                 color: Colors.blue,
@@ -276,13 +431,14 @@ class _MyListPageState extends State<MyListPage> {
           onTap: (index) {
             setState(() {
               if (_selectedIndex == index) {
-
-
                 Navigator.pushReplacement(context,
                     MaterialPageRoute(builder: (context) => ListApp()));
-              } else {
+              } else if (_selectedIndex2 == index) {
                 Navigator.pushReplacement(context,
                     MaterialPageRoute(builder: (context) => ProfilePage()));
+              } else {
+                Navigator.pushReplacement(context,
+                    MaterialPageRoute(builder: (context) => DriverHistory()));
               }
             });
           },
@@ -291,6 +447,7 @@ class _MyListPageState extends State<MyListPage> {
     );
   }
 
+/*
   void dismissProgressHUD() {
     setState(() {
       if (_loading) {
@@ -302,27 +459,28 @@ class _MyListPageState extends State<MyListPage> {
       _loading = !_loading;
     });
   }
+*/
 
   Future<bool> _onBackPressed() {
     return showDialog(
-          context: context,
-          builder: (context) => new AlertDialog(
-            title: new Text('Are you sure?'),
-            content: new Text('Do you want to exit an App'),
-            actions: <Widget>[
-              new GestureDetector(
-                onTap: () => Navigator.of(context).pop(false),
-                child: roundedButton(
-                    "No", const Color(0xFF167F67), const Color(0xFFFFFFFF)),
-              ),
-              new GestureDetector(
-                onTap: () => Navigator.of(context).pop(true),
-                child: roundedButton(
-                    " Yes ", const Color(0xFF167F67), const Color(0xFFFFFFFF)),
-              ),
-            ],
+      context: context,
+      builder: (context) => new AlertDialog(
+        title: new Text('Are you sure?'),
+        content: new Text('Do you want to exit an App'),
+        actions: <Widget>[
+          new GestureDetector(
+            onTap: () => Navigator.of(context).pop(false),
+            child: roundedButton(
+                "No", const Color(0xFF167F67), const Color(0xFFFFFFFF)),
           ),
-        ) ??
+          new GestureDetector(
+            onTap: () => Navigator.of(context).pop(true),
+            child: roundedButton(
+                " Yes ", const Color(0xFF167F67), const Color(0xFFFFFFFF)),
+          ),
+        ],
+      ),
+    ) ??
         false;
   }
 
@@ -351,22 +509,39 @@ class _MyListPageState extends State<MyListPage> {
   }
 }
 
-ShowRestaurantSelectDialog(BuildContext context) async {
+_showLayout(BuildContext context) async {
   print("_showLayout:");
   await showDialog(
     context: context,
     builder: (context) {
       return AlertDialog(
-        title: Text('Please Select Restaurant'),
+        title: Text('Please select restaurant'),
         actions: <Widget>[
           FlatButton(
               child: Text('OK'),
               onPressed: () {
                 Navigator.of(context).push(
                     MaterialPageRoute<Null>(builder: (BuildContext context) {
-                  return new RestaurantList();
-                }));
+                      return new RestaurantList();
+                    }));
               }),
+        ],
+      );
+    },
+  );
+}
+
+final String url = 'https://votivetech.in/courier/webservice/api/getTripList';
+
+NoTada(BuildContext context) async {
+  print("_showLayout:");
+  await showDialog(
+    context: context,
+    builder: (context) {
+      return AlertDialog(
+        title: Text('You dont have any Trip'),
+        actions: <Widget>[
+          FlatButton(child: Text('OK'), onPressed: () {}),
         ],
       );
     },
